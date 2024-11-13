@@ -1,0 +1,26 @@
+# Dockerfile.backend
+# FROM ubuntu:latest
+# FROM node:latest
+FROM node:latest AS build
+
+# Set the working directory
+WORKDIR /wanderlust/backend
+
+# Copy the package.json and package-lock.json files
+COPY package.json package-lock.json ./
+
+# Install the dependencies
+RUN npm install
+
+# Copy the rest of the backend files
+COPY . .
+
+FROM node:alpine AS production
+
+COPY --from=build /wanderlust/backend .
+
+# Expose the port the backend runs on
+EXPOSE 5000
+
+# Start the backend
+ENTRYPOINT [ "npm", "start" ]
